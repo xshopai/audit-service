@@ -1,6 +1,6 @@
 # 📋 Audit Service
 
-Event-driven audit logging microservice for xShop.ai - consumes events from message broker and stores immutable audit trails in PostgreSQL for compliance and monitoring.
+Event-driven audit logging microservice for xshop.ai - consumes events from message broker and stores immutable audit trails in PostgreSQL for compliance and monitoring.
 
 ## 🚀 Quick Start
 

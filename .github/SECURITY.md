@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Audit Service is a high-performance audit logging microservice that maintains comprehensive audit trails for all platform activities. It handles sensitive audit data, compliance logging, and security event tracking across the entire xShop.ai ecosystem.
+The Audit Service is a high-performance audit logging microservice that maintains comprehensive audit trails for all platform activities. It handles sensitive audit data, compliance logging, and security event tracking across the entire xshop.ai ecosystem.
 
 ## Supported Versions
 
@@ -172,7 +172,7 @@ Audit service vulnerabilities affect platform-wide compliance:
 
 1. **Do NOT** open a public issue
 2. **Do NOT** attempt to modify audit logs
-3. **Email** our security team at: <security@aioutlet.com>
+3. **Email** our security team at: <security@xshopai.com>
 
 ### Critical Security Areas
 
@@ -330,9 +330,9 @@ The Audit Service adheres to:
 
 For security-related questions or concerns:
 
-- **Email**: <security@aioutlet.com>
+- **Email**: <security@xshopai.com>
 - **Emergency**: Include "URGENT AUDIT SECURITY" in subject line
-- **Compliance Issues**: Copy <compliance@aioutlet.com>
+- **Compliance Issues**: Copy <compliance@xshopai.com>
 
 ---
 
