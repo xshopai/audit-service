@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Audit Service is a high-performance audit logging microservice that maintains comprehensive audit trails for all platform activities. It handles sensitive audit data, compliance logging, and security event tracking across the entire xshop.ai ecosystem.
+The Audit Service is a high-performance audit logging microservice that maintains comprehensive audit trails for all platform activities. It handles sensitive audit data, compliance logging, and security event tracking across the entire xshopai ecosystem.
 
 ## Supported Versions
 
