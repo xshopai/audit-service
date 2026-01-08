@@ -1,7 +1,7 @@
 {
   "name": "audit-service",
   "version": "1.0.0",
-  "description": "Event-driven audit logging consumer for AI Outlet platform",
+  "description": "Event-driven audit logging consumer for xshopai platform",
   "main": "dist/consumer/server.js",
   "type": "module",
   "scripts": {
@@ -56,6 +56,6 @@
     "express",
     "typescript"
   ],
-  "author": "AI Outlet Team",
+  "author": "xshopai Team",
   "license": "MIT"
 }
