@@ -8,6 +8,7 @@
     "build": "tsc && tsc-alias -p tsconfig.json",
     "start": "dapr run --app-id audit-service --app-port 1012 --dapr-http-port 3512 --dapr-grpc-port 50012 --log-level warn --config ./.dapr/config.yaml --resources-path ./.dapr/components -- node dist/server.js",
     "dev": "dapr run --app-id audit-service --app-port 1012 --dapr-http-port 3512 --dapr-grpc-port 50012 --log-level warn --config ./.dapr/config.yaml --resources-path ./.dapr/components -- npx tsx watch src/server.ts",
+    "debug": "dapr run --app-id audit-service --app-port 1012 --dapr-http-port 3512 --dapr-grpc-port 50012 --log-level warn --config ./.dapr/config.yaml --resources-path ./.dapr/components -- npx tsx --inspect=9229 src/server.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint src --ext .ts",
