@@ -138,7 +138,7 @@ else
             "NODE_ENV=production" \
             "PORT=$APP_PORT" \
             "DATABASE_URL=secretref:database-url" \
-            "DAPR_HTTP_PORT=3500" \
+            "DAPR_HTTP_PORT=3512" \
         --output none
 fi
 print_success "Container app deployed"
