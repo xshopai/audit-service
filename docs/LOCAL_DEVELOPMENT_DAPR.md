@@ -57,12 +57,14 @@ scopes:
 
 ### Manual Dapr Run
 
+> **Note:** All services now use the standard Dapr ports (3500 for HTTP, 50001 for gRPC). This simplifies configuration and works consistently whether running via Docker Compose or individual service runs.
+
 ```bash
 dapr run \
   --app-id audit-service \
   --app-port 1012 \
-  --dapr-http-port 3512 \
-  --dapr-grpc-port 50012 \
+  --dapr-http-port 3500 \
+  --dapr-grpc-port 50001 \
   --resources-path .dapr/components \
   --config .dapr/config.yaml \
   -- npm run dev
@@ -87,7 +89,7 @@ app.get('/dapr/subscribe', (req, res) => {
 ### Publish Test Event
 
 ```bash
-curl -X POST http://localhost:3512/v1.0/publish/xshopai-pubsub/user.created \
+curl -X POST http://localhost:3500/v1.0/publish/xshopai-pubsub/user.created \
   -H "Content-Type: application/json" \
   -d '{"userId": "test-123", "email": "test@example.com"}'
 ```
