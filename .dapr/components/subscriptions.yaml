@@ -6,7 +6,7 @@ metadata:
 spec:
   topic: auth.user.registered
   route: /events/auth/user-registered
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -17,7 +17,7 @@ metadata:
 spec:
   topic: auth.login
   route: /events/auth/login
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -28,7 +28,7 @@ metadata:
 spec:
   topic: auth.email.verification.requested
   route: /events/auth/email-verification-requested
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -39,7 +39,7 @@ metadata:
 spec:
   topic: auth.password.reset.requested
   route: /events/auth/password-reset-requested
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -50,7 +50,7 @@ metadata:
 spec:
   topic: auth.password.reset.completed
   route: /events/auth/password-reset-completed
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -61,7 +61,7 @@ metadata:
 spec:
   topic: auth.account.reactivation.requested
   route: /events/auth/account-reactivation-requested
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -73,7 +73,7 @@ metadata:
 spec:
   topic: user.created
   route: /events/user/created
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -84,7 +84,7 @@ metadata:
 spec:
   topic: user.updated
   route: /events/user/updated
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -95,7 +95,7 @@ metadata:
 spec:
   topic: user.deleted
   route: /events/user/deleted
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -106,7 +106,7 @@ metadata:
 spec:
   topic: email.verified
   route: /events/user/email-verified
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -117,7 +117,7 @@ metadata:
 spec:
   topic: password.changed
   route: /events/user/password-changed
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -129,7 +129,7 @@ metadata:
 spec:
   topic: order.placed
   route: /events/order/placed
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -140,7 +140,7 @@ metadata:
 spec:
   topic: order.cancelled
   route: /events/order/cancelled
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -151,7 +151,7 @@ metadata:
 spec:
   topic: order.delivered
   route: /events/order/delivered
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -162,7 +162,7 @@ metadata:
 spec:
   topic: payment.received
   route: /events/order/payment-received
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -173,7 +173,7 @@ metadata:
 spec:
   topic: payment.failed
   route: /events/order/payment-failed
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -185,7 +185,7 @@ metadata:
 spec:
   topic: product.created
   route: /events/product/created
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -196,7 +196,7 @@ metadata:
 spec:
   topic: product.updated
   route: /events/product/updated
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -207,7 +207,7 @@ metadata:
 spec:
   topic: product.deleted
   route: /events/product/deleted
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -218,7 +218,7 @@ metadata:
 spec:
   topic: product.price.changed
   route: /events/product/price-changed
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -230,7 +230,7 @@ metadata:
 spec:
   topic: cart.item.added
   route: /events/cart/item-added
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -241,7 +241,7 @@ metadata:
 spec:
   topic: cart.item.removed
   route: /events/cart/item-removed
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -252,7 +252,7 @@ metadata:
 spec:
   topic: cart.cleared
   route: /events/cart/cleared
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -263,7 +263,7 @@ metadata:
 spec:
   topic: cart.abandoned
   route: /events/cart/abandoned
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -275,7 +275,7 @@ metadata:
 spec:
   topic: inventory.stock.updated
   route: /events/inventory/stock-updated
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -286,7 +286,7 @@ metadata:
 spec:
   topic: inventory.restock
   route: /events/inventory/restock
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -297,7 +297,7 @@ metadata:
 spec:
   topic: inventory.low.stock.alert
   route: /events/inventory/low-stock-alert
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -308,7 +308,7 @@ metadata:
 spec:
   topic: inventory.reserved
   route: /events/inventory/reserved
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -320,7 +320,7 @@ metadata:
 spec:
   topic: review.created
   route: /events/review/created
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -331,7 +331,7 @@ metadata:
 spec:
   topic: review.updated
   route: /events/review/updated
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -342,7 +342,7 @@ metadata:
 spec:
   topic: review.deleted
   route: /events/review/deleted
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -353,7 +353,7 @@ metadata:
 spec:
   topic: review.moderated
   route: /events/review/moderated
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -364,7 +364,7 @@ metadata:
 spec:
   topic: review.flagged
   route: /events/review/flagged
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -376,7 +376,7 @@ metadata:
 spec:
   topic: notification.sent
   route: /events/notification/sent
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -387,7 +387,7 @@ metadata:
 spec:
   topic: notification.delivered
   route: /events/notification/delivered
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -398,7 +398,7 @@ metadata:
 spec:
   topic: notification.failed
   route: /events/notification/failed
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -409,7 +409,7 @@ metadata:
 spec:
   topic: notification.opened
   route: /events/notification/opened
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -421,7 +421,7 @@ metadata:
 spec:
   topic: admin.action.performed
   route: /events/admin/action-performed
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -432,7 +432,7 @@ metadata:
 spec:
   topic: admin.user.created
   route: /events/admin/user-created
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service
 ---
@@ -443,6 +443,6 @@ metadata:
 spec:
   topic: admin.config.changed
   route: /events/admin/config-changed
-  pubsubname: event-bus
+  pubsubname: pubsub
 scopes:
   - audit-service

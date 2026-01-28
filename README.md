@@ -14,12 +14,14 @@ Event-driven audit logging microservice for xshopai - consumes events from messa
 ### Using Docker (Recommended)
 
 **1. Start Services**
+
 ```bash
 cd audit-service
 docker-compose up -d
 ```
 
 **2. Check Health**
+
 ```bash
 curl http://localhost:9000/api/v1/health
 ```
@@ -27,6 +29,7 @@ curl http://localhost:9000/api/v1/health
 ### Manual Setup
 
 **1. Start PostgreSQL & Redis**
+
 ```bash
 # Using Docker
 docker run -d --name audit-postgres -p 5432:5432 \
@@ -38,6 +41,7 @@ docker run -d --name audit-redis -p 6379:6379 redis:7-alpine
 ```
 
 **2. Clone & Install**
+
 ```bash
 git clone https://github.com/xshopai/audit-service.git
 cd audit-service
@@ -45,6 +49,7 @@ npm install
 ```
 
 **3. Configure Environment**
+
 ```bash
 # Copy environment template
 cp .env.example .env
@@ -55,12 +60,14 @@ cp .env.example .env
 ```
 
 **4. Initialize Dapr**
+
 ```bash
 # First time only
 dapr init
 ```
 
 **5. Build & Run**
+
 ```bash
 # Build TypeScript
 npm run build
@@ -70,6 +77,7 @@ npm run dev
 ```
 
 **6. Verify**
+
 ```bash
 # Check health
 curl http://localhost:1012/health
@@ -98,11 +106,11 @@ npm start
 
 ## 📚 Documentation
 
-| Document | Description |
-|----------|-------------|
+| Document                                      | Description                             |
+| --------------------------------------------- | --------------------------------------- |
 | [📖 Developer Guide](docs/DEVELOPER_GUIDE.md) | Local setup, debugging, daily workflows |
-| [📘 Technical Reference](docs/TECHNICAL.md) | Architecture, security, monitoring |
-| [🤝 Contributing](docs/CONTRIBUTING.md) | Contribution guidelines and workflow |
+| [📘 Technical Reference](docs/TECHNICAL.md)   | Architecture, security, monitoring      |
+| [🤝 Contributing](docs/CONTRIBUTING.md)       | Contribution guidelines and workflow    |
 
 ## ⚙️ Configuration
 
@@ -120,10 +128,11 @@ DATABASE_URL=postgresql://postgres:postgres@localhost:5432/audit_service_db
 REDIS_URL=redis://localhost:6379
 
 # Dapr
-DAPR_HTTP_PORT=3512              # Dapr sidecar HTTP port
-DAPR_GRPC_PORT=50012             # Dapr sidecar gRPC port
+DAPR_HTTP_PORT=3500              # Dapr sidecar HTTP port
+DAPR_GRPC_PORT=50001             # Dapr sidecar gRPC port
 DAPR_APP_ID=audit-service        # Dapr application ID
-DAPR_PUBSUB_NAME=event-pubsub    # Dapr pub/sub component name
+DAPR_PUBSUB_NAME=pubsub          # Dapr pub/sub component name
+DAPR_SECRETSTORE_NAME=secretstore  # Dapr secret store component name
 ```
 
 See [.env.example](.env.example) for complete configuration options.
@@ -146,6 +155,7 @@ See [.env.example](.env.example) for complete configuration options.
 ## 🏗️ Architecture
 
 **Consumer-Only Pattern:**
+
 ```
 Message Broker → Audit Service → PostgreSQL + Redis
                        ↓
