@@ -39,7 +39,7 @@ const isValidLogLevel = (level: string): boolean => {
  * Validates NODE_ENV
  */
 const isValidNodeEnv = (env: string): boolean => {
-  const validEnvs = ['development', 'production', 'test', 'staging'];
+  const validEnvs = ['development', 'production', 'test'];
   return validEnvs.includes(env?.toLowerCase());
 };
 
@@ -65,7 +65,7 @@ const validationRules: Record<string, ValidationRule> = {
   NODE_ENV: {
     required: false,
     validator: isValidNodeEnv,
-    errorMessage: 'NODE_ENV must be one of: development, production, test, staging',
+    errorMessage: 'NODE_ENV must be one of: development, production, test',
     default: 'development',
   },
   PORT: {

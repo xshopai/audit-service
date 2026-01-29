@@ -112,7 +112,7 @@ componentType: pubsub.azure.servicebus
 version: v1
 metadata:
   - name: connectionString
-    secretRef: servicebus-connection
+    secretRef: xshopai-servicebus-connection
 scopes:
   - audit-service
 ```

@@ -44,11 +44,16 @@ prompt_with_default "Enter PostgreSQL Admin Password" "" POSTGRES_PASSWORD
 APP_NAME="audit-service"
 APP_PORT=1012
 
+# Container App name follows convention: ca-{service}-{env}-{suffix}
+# Note: For simplified deployments without suffix, we default to APP_NAME
+CONTAINER_APP_NAME="$APP_NAME"
+
 # Confirmation
 print_header "Deployment Configuration"
 echo "Resource Group:       $RESOURCE_GROUP"
 echo "Container Registry:   $ACR_NAME"
 echo "PostgreSQL Server:    $POSTGRES_SERVER"
+echo "Container App:        $CONTAINER_APP_NAME"
 echo "App Name:             $APP_NAME"
 echo "App Port:             $APP_PORT"
 
@@ -113,18 +118,19 @@ print_success "Environment ready"
 
 # Deploy
 print_header "Step 6: Deploy Container App"
-if az containerapp show --name "$APP_NAME" --resource-group "$RESOURCE_GROUP" &> /dev/null; then
-    az containerapp update --name "$APP_NAME" --resource-group "$RESOURCE_GROUP" --image "$IMAGE_TAG" \
+if az containerapp show --name "$CONTAINER_APP_NAME" --resource-group "$RESOURCE_GROUP" &> /dev/null; then
+    az containerapp update --name "$CONTAINER_APP_NAME" --resource-group "$RESOURCE_GROUP" --image "$IMAGE_TAG" \
         --set-env-vars "DATABASE_URL=secretref:database-url" --output none
 else
     az containerapp create \
-        --name "$APP_NAME" \
+        --name "$CONTAINER_APP_NAME" \
+        --container-name "$APP_NAME" \
         --resource-group "$RESOURCE_GROUP" \
         --environment "$ENVIRONMENT_NAME" \
         --image "$IMAGE_TAG" \
         --registry-server "$ACR_LOGIN_SERVER" \
         --target-port $APP_PORT \
-        --ingress internal \
+        --ingress external \
         --min-replicas 1 \
         --max-replicas 5 \
         --cpu 0.5 \
