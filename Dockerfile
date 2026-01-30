@@ -73,6 +73,9 @@ COPY --from=build --chown=audituser:nodejs /app/node_modules ./node_modules
 COPY --from=build --chown=audituser:nodejs /app/dist ./dist
 COPY --from=build --chown=audituser:nodejs /app/package*.json ./
 
+# Copy SQL migration files (not compiled, raw SQL)
+COPY --from=build --chown=audituser:nodejs /app/src/db/migrations ./src/db/migrations
+
 # Create logs directory
 RUN mkdir -p logs && chown -R audituser:nodejs logs
 
@@ -88,7 +91,8 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 
 # Use dumb-init to handle signals properly (important for consumers)
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["npm", "start"]
+# Run Node.js directly - Dapr is provided as a sidecar in Container Apps
+CMD ["node", "dist/server.js"]
 
 # Labels for better image management and security scanning
 LABEL maintainer="xshopai Team"

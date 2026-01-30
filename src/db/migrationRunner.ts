@@ -2,7 +2,7 @@ import { Pool, PoolClient } from 'pg';
 import { promises as fs } from 'fs';
 import { join, basename } from 'path';
 import { createHash } from 'crypto';
-import logger from '../core/logger';
+import logger from '../core/logger.js';
 
 interface Migration {
   name: string;
@@ -192,7 +192,7 @@ export class DatabaseMigrationRunner {
       await client.query(
         `INSERT INTO migration_history (migration_name, execution_time_ms, checksum) 
          VALUES ($1, $2, $3)`,
-        [migration.name, Date.now() - startTime, migration.checksum]
+        [migration.name, Date.now() - startTime, migration.checksum],
       );
 
       // Commit transaction

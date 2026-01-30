@@ -74,8 +74,11 @@ temp/
 *.temp
 *~
 
-# TypeScript config
-tsconfig*.json
+# TypeScript config - DO NOT exclude, required for build
+# tsconfig*.json
+
+# tsc-alias config - DO NOT exclude, required for build
+# tsc-alias.config.json
 
 # Jest
 jest.config.*

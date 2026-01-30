@@ -1,10 +1,10 @@
-export { default as DatabaseConnection } from './connection';
-export { DatabaseMigrationRunner } from './migrationRunner';
+export { default as DatabaseConnection } from './connection.js';
+export { DatabaseMigrationRunner } from './migrationRunner.js';
 
 // Initialize and run migrations on startup
-import DatabaseConnection from './connection';
-import { DatabaseMigrationRunner } from './migrationRunner';
-import logger from '../core/logger';
+import DatabaseConnection from './connection.js';
+import { DatabaseMigrationRunner } from './migrationRunner.js';
+import logger from '../core/logger.js';
 
 /**
  * Initialize database and run migrations

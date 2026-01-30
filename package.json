@@ -2,7 +2,7 @@
   "name": "audit-service",
   "version": "1.0.0",
   "description": "Event-driven audit logging consumer for xshopai platform",
-  "main": "dist/consumer/server.js",
+  "main": "dist/server.js",
   "type": "module",
   "scripts": {
     "build": "tsc && tsc-alias -p tsconfig.json",

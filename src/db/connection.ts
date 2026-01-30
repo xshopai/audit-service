@@ -1,6 +1,6 @@
 import { Pool, PoolConfig } from 'pg';
 import { config } from '../config/index.js';
-import logger from '../core/logger';
+import logger from '../core/logger.js';
 import { getDatabaseConfig } from '../core/secretManager.js';
 
 /**
