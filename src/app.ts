@@ -32,7 +32,7 @@ export function trackMessageProcessed() {
  */
 function startExpressServer(): void {
   const app = express();
-  const PORT = config.port || 9012;
+  const PORT = config.port || 8012;
   const HOST = '0.0.0.0';
 
   // Middleware

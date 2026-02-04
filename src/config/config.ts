@@ -84,12 +84,12 @@ const getEnvBoolean = (key: string, defaultValue?: boolean): boolean => {
 
 export const config: Config = {
   env: getEnv('NODE_ENV', 'development'),
-  port: getEnvNumber('PORT', 9000),
+  port: getEnvNumber('PORT', 8012),
   host: getEnv('HOST', '0.0.0.0'),
 
   database: {
     host: getEnv('POSTGRES_HOST', 'localhost'),
-    port: getEnvNumber('POSTGRES_PORT', 5432),
+    port: getEnvNumber('POSTGRES_PORT', 5434),
     name: getEnv('POSTGRES_DB', 'audit_service_db'),
     user: getEnv('POSTGRES_USER', 'postgres'),
     password: getEnv('POSTGRES_PASSWORD', 'password'),
@@ -124,9 +124,9 @@ export const config: Config = {
 
   dapr: {
     host: getEnv('DAPR_HOST', '127.0.0.1'),
-    httpPort: getEnvNumber('DAPR_HTTP_PORT', 3500),
-    grpcPort: getEnvNumber('DAPR_GRPC_PORT', 50001),
-    appPort: getEnvNumber('PORT', 9000), // Dapr app port same as service port
+    httpPort: getEnvNumber('DAPR_HTTP_PORT', 3512),
+    grpcPort: getEnvNumber('DAPR_GRPC_PORT', 50012),
+    appPort: getEnvNumber('PORT', 8012), // Dapr app port same as service port
     secretStoreName: 'secretstore',
   },
 };

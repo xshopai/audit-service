@@ -1,22 +1,20 @@
-#!/usr/bin/env bash
-# Run Audit Service with Dapr sidecar
-# Usage: ./run.sh
+#!/bin/bash
 
-echo -e "\033[0;32mStarting Audit Service with Dapr...\033[0m"
-echo -e "\033[0;36mService will be available at: http://localhost:8012\033[0m"
-echo -e "\033[0;36mDapr HTTP endpoint: http://localhost:3500\033[0m"
-echo -e "\033[0;36mDapr gRPC endpoint: localhost:50001\033[0m"
+# Audit Service - Run with Dapr
+
+echo "Starting Audit Service with Dapr..."
+echo "Service will be available at: http://localhost:8012"
+echo "Dapr HTTP endpoint: http://localhost:3512"
+echo "Dapr gRPC endpoint: localhost:50012"
 echo ""
-
-# Get the script directory
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 dapr run \
   --app-id audit-service \
   --app-port 8012 \
-  --dapr-http-port 3500 \
-  --dapr-grpc-port 50001 \
-  --resources-path "$SCRIPT_DIR/.dapr/components" \
-  --config "$SCRIPT_DIR/.dapr/config.yaml" \
-  --log-level warn \
-  -- npx tsx watch src/server.ts
+  --dapr-http-port 3512 \
+  --dapr-grpc-port 50012 \
+  --log-level info \
+  --config ./.dapr/config.yaml \
+  --resources-path ./.dapr/components \
+  -- npm run dev:local
+
