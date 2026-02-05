@@ -3,25 +3,41 @@
  * Provides secret management using Dapr's secret store building block.
  */
 
-import { DaprClient } from '@dapr/dapr';
+// Module-level check to prevent Dapr SDK loading when not needed
+const MESSAGING_PROVIDER = process.env.MESSAGING_PROVIDER || 'dapr';
+const shouldUseDapr = MESSAGING_PROVIDER === 'dapr';
+
 import logger from './logger.js';
 import { config } from '../config/index.js';
+
+// Lazy import Dapr SDK
+let DaprClient: any = null;
+
+async function loadDaprSdk() {
+  if (!DaprClient && shouldUseDapr) {
+    const daprModule = await import('@dapr/dapr');
+    DaprClient = daprModule.DaprClient;
+  }
+}
 
 class DaprSecretManager {
   private daprHost: string;
   private daprPort: number;
   private secretStoreName: string;
+  private shouldUseDapr: boolean;
 
   constructor() {
     this.daprHost = config.dapr.host;
     this.daprPort = config.dapr.httpPort;
     this.secretStoreName = config.dapr.secretStoreName;
+    this.shouldUseDapr = shouldUseDapr;
 
     logger.info('Secret manager initialized', {
       event: 'secret_manager_init',
       secretStore: this.secretStoreName,
       daprHost: this.daprHost,
       daprPort: this.daprPort,
+      daprEnabled: this.shouldUseDapr,
     });
   }
 
@@ -31,7 +47,13 @@ class DaprSecretManager {
    * @returns Secret value or null if not found
    */
   async getSecret(secretName: string): Promise<string | null> {
+    if (!this.shouldUseDapr) {
+      // When not using Dapr, return null to fall back to environment variables
+      return null;
+    }
+
     try {
+      await loadDaprSdk();
       const client = new DaprClient({
         daprHost: this.daprHost,
         daprPort: String(this.daprPort),

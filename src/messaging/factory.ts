@@ -4,9 +4,6 @@
  */
 
 import { MessagingProvider, MessagingProviderType } from './provider.js';
-import { DaprMessagingProvider } from './daprProvider.js';
-import { RabbitMQMessagingProvider } from './rabbitmqProvider.js';
-import { ServiceBusMessagingProvider } from './servicebusProvider.js';
 import logger from '../core/logger.js';
 
 // Singleton instance
@@ -30,30 +27,37 @@ function getProviderType(): MessagingProviderType {
 }
 
 /**
- * Create a messaging provider instance based on type
+ * Create a messaging provider instance based on type (async with lazy imports)
  */
-function createProvider(providerType: MessagingProviderType): MessagingProvider {
+async function createProvider(providerType: MessagingProviderType): Promise<MessagingProvider> {
   switch (providerType) {
-    case 'dapr':
+    case 'dapr': {
+      const { DaprMessagingProvider } = await import('./daprProvider.js');
       return new DaprMessagingProvider();
-    case 'rabbitmq':
+    }
+    case 'rabbitmq': {
+      const { RabbitMQMessagingProvider } = await import('./rabbitmqProvider.js');
       return new RabbitMQMessagingProvider();
-    case 'servicebus':
+    }
+    case 'servicebus': {
+      const { ServiceBusMessagingProvider } = await import('./servicebusProvider.js');
       return new ServiceBusMessagingProvider();
+    }
     default:
       // This shouldn't happen due to getProviderType validation
       logger.error(`Unknown provider type: ${providerType}, using Dapr`, {
         operation: 'messaging_factory',
       });
+      const { DaprMessagingProvider } = await import('./daprProvider.js');
       return new DaprMessagingProvider();
   }
 }
 
 /**
- * Get the messaging provider singleton instance
+ * Get the messaging provider singleton instance (async)
  * Creates the provider on first call based on MESSAGING_PROVIDER env var
  */
-export function getMessagingProvider(): MessagingProvider {
+export async function getMessagingProvider(): Promise<MessagingProvider> {
   if (!messagingProviderInstance) {
     const providerType = getProviderType();
 
@@ -62,7 +66,7 @@ export function getMessagingProvider(): MessagingProvider {
       provider: providerType,
     });
 
-    messagingProviderInstance = createProvider(providerType);
+    messagingProviderInstance = await createProvider(providerType);
   }
 
   return messagingProviderInstance;

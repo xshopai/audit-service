@@ -3,13 +3,24 @@
  * Implements messaging via Dapr pub/sub building block
  */
 
-import { DaprClient, CommunicationProtocolEnum } from '@dapr/dapr';
 import { MessagingProvider, buildCloudEvent } from './provider.js';
 import { config } from '../config/index.js';
 import logger from '../core/logger.js';
 
+// Lazy import Dapr SDK
+let DaprClient: any = null;
+let CommunicationProtocolEnum: any = null;
+
+async function loadDaprSdk() {
+  if (!DaprClient) {
+    const daprModule = await import('@dapr/dapr');
+    DaprClient = daprModule.DaprClient;
+    CommunicationProtocolEnum = daprModule.CommunicationProtocolEnum;
+  }
+}
+
 export class DaprMessagingProvider implements MessagingProvider {
-  private client: DaprClient | null = null;
+  private client: any | null = null;
   private readonly pubsubName: string;
   private readonly serviceName: string;
   private readonly daprHost: string;
@@ -22,8 +33,9 @@ export class DaprMessagingProvider implements MessagingProvider {
     this.daprPort = config.dapr.httpPort;
   }
 
-  private getClient(): DaprClient {
+  private async getClient(): Promise<any> {
     if (!this.client) {
+      await loadDaprSdk();
       this.client = new DaprClient({
         daprHost: this.daprHost,
         daprPort: String(this.daprPort),
@@ -52,7 +64,7 @@ export class DaprMessagingProvider implements MessagingProvider {
         pubsubName: this.pubsubName,
       });
 
-      const client = this.getClient();
+      const client = await this.getClient();
 
       // Let Dapr handle CloudEvents wrapping/unwrapping natively
       // Do NOT use rawPayload - it causes deserialization issues with Azure Service Bus

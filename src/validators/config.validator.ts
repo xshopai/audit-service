@@ -74,11 +74,10 @@ const validationRules: Record<string, ValidationRule> = {
     errorMessage: 'PORT must be a valid port number (1-65535)',
     default: '9012',
   },
-  NAME: {
-    required: false,
+  SERVICE_NAME: {
+    required: true,
     validator: (value) => Boolean(value && value.length > 0),
-    errorMessage: 'NAME must be a non-empty string',
-    default: 'audit-service',
+    errorMessage: 'SERVICE_NAME must be a non-empty string',
   },
   VERSION: {
     required: false,

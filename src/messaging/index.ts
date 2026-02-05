@@ -5,7 +5,7 @@
  * Usage:
  *   import { getMessagingProvider, closeMessagingProvider } from './messaging/index.js';
  *
- *   const provider = getMessagingProvider();
+ *   const provider = await getMessagingProvider();
  *   await provider.publishEvent('topic.name', { data: 'value' }, 'correlation-id');
  *
  * Configuration:
@@ -17,11 +17,6 @@
 
 // Types and interfaces
 export { MessagingProvider, MessagingProviderType, CloudEvent, buildCloudEvent } from './provider.js';
-
-// Provider implementations (for direct instantiation if needed)
-export { DaprMessagingProvider } from './daprProvider.js';
-export { RabbitMQMessagingProvider } from './rabbitmqProvider.js';
-export { ServiceBusMessagingProvider } from './servicebusProvider.js';
 
 // Factory functions (recommended usage)
 export { getMessagingProvider, closeMessagingProvider, resetMessagingProvider } from './factory.js';

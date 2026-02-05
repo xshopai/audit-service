@@ -12,8 +12,18 @@
  *   The mapping is handled by Dapr component configuration in Azure.
  */
 
-import { DaprClient } from '@dapr/dapr';
+// Module-level check to prevent Dapr SDK loading when not needed
+const MESSAGING_PROVIDER = process.env.MESSAGING_PROVIDER || 'dapr';
+const shouldUseDapr = MESSAGING_PROVIDER === 'dapr';
+
 import logger from '../core/logger.js';
+
+// Conditional Dapr client import
+let DaprClient = null;
+if (shouldUseDapr) {
+  const daprModule = await import('@dapr/dapr');
+  DaprClient = daprModule.DaprClient;
+}
 
 class DaprSecretManager {
   constructor() {
@@ -21,15 +31,18 @@ class DaprSecretManager {
     this.daprHost = process.env.DAPR_HOST || '127.0.0.1';
     this.daprPort = process.env.DAPR_HTTP_PORT || '3500';
     this.secretStoreName = 'secretstore';
+    this.shouldUseDapr = shouldUseDapr;
 
-    this.client = new DaprClient({
-      daprHost: this.daprHost,
-      daprPort: this.daprPort,
-    });
+    if (this.shouldUseDapr && DaprClient) {
+      this.client = new DaprClient({
+        daprHost: this.daprHost,
+        daprPort: this.daprPort,
+      });
+    }
 
     logger.info('Secret manager initialized', null, {
       event: 'secret_manager_init',
-      daprEnabled: true,
+      daprEnabled: this.shouldUseDapr,
       environment: this.environment,
       secretStore: this.secretStoreName,
     });
@@ -41,6 +54,10 @@ class DaprSecretManager {
    * @returns {Promise<string>} Secret value
    */
   async getSecret(secretName) {
+    if (!this.shouldUseDapr || !this.client) {
+      throw new Error('Dapr is not enabled');
+    }
+
     try {
       const response = await this.client.secret.get(this.secretStoreName, secretName);
 
