@@ -41,7 +41,7 @@ USER audituser
 # Expose health port only
 EXPOSE ${PORT:-8012}
 
-# Health check on liveness endpoint (using Node.js to avoid curl dependency)
+# Health check (using Node.js HTTP GET to /health/live)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
     CMD node -e "require('http').get('http://localhost:' + (process.env.PORT || '8012') + '/health/live', (r) => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
 
