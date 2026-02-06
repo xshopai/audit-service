@@ -23,16 +23,16 @@ class DatabaseConnection {
   }
 
   /**
-   * Initialize database connection pool with lazy loading from Dapr secrets
+   * Initialize database connection pool
    */
   async initialize(): Promise<Pool> {
     if (this.pool) {
       return this.pool;
     }
 
-    // Load database configuration from Dapr secrets (no fallback)
-    const dbConfig = await getDatabaseConfig();
-    logger.info('Database configuration loaded from Dapr secrets', {
+    // Load database configuration from environment variables
+    const dbConfig = getDatabaseConfig();
+    logger.info('Database configuration loaded from environment', {
       component: 'database-pool',
       host: dbConfig.host,
       port: dbConfig.port,
