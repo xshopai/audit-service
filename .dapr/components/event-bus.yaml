@@ -9,6 +9,9 @@ spec:
     # RabbitMQ connection string
     - name: connectionString
       value: 'amqp://admin:admin123@127.0.0.1:5672'
+    # Single shared exchange for all events
+    - name: exchangeName
+      value: 'xshopai.events'
     # Consumer ID for this service instance
     - name: consumerID
       value: 'audit-service'
