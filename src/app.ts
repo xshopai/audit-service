@@ -51,7 +51,8 @@ function startExpressServer(): void {
   app.use(errorMiddleware as any);
 
   app.listen(PORT, HOST, () => {
-    logger.info(`Audit Service running on ${HOST}:${PORT}`);
+    const displayHost = HOST === '0.0.0.0' ? 'localhost' : HOST;
+    logger.info(`Audit Service running on ${displayHost}:${PORT}`);
     logger.info(`Ready to receive events from Dapr subscriptions`);
   });
 }

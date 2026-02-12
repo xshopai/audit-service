@@ -1,32 +1,62 @@
 import winston from 'winston';
 import { config } from '../config/index.js';
 
-const logLevel = process.env.LOG_LEVEL || 'info';
-const logFormat = process.env.LOG_FORMAT || 'json';
+const IS_DEVELOPMENT = process.env.NODE_ENV === 'development';
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const IS_TEST = process.env.NODE_ENV === 'test';
+const NAME = config.service.name || 'audit-service';
+const LOG_FORMAT = process.env.LOG_FORMAT || (IS_PRODUCTION ? 'json' : 'console');
 
-const format =
-  logFormat === 'json'
-    ? winston.format.combine(winston.format.timestamp(), winston.format.errors({ stack: true }), winston.format.json())
-    : winston.format.combine(
-        winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-        winston.format.errors({ stack: true }),
-        winston.format.printf(({ timestamp, level, message, ...meta }) => {
-          const metaStr = Object.keys(meta).length ? JSON.stringify(meta) : '';
-          return `${timestamp} [${level.toUpperCase()}]: ${message} ${metaStr}`;
-        })
-      );
+/**
+ * Console formatter for development with color coding
+ */
+const consoleFormat = winston.format.printf(({ level, message, timestamp, traceId, spanId, ...meta }) => {
+  const colors: Record<string, string> = {
+    error: '\x1b[31m',
+    warn: '\x1b[33m',
+    info: '\x1b[32m',
+    debug: '\x1b[34m',
+  };
+  const reset = '\x1b[0m';
+  const color = colors[level] || '';
+
+  // Show first 8 chars of traceId in console for readability
+  const traceIdShort = traceId && typeof traceId === 'string' ? traceId.substring(0, 8) : 'no-trace';
+  const traceInfo = `[trace:${traceIdShort}]`;
+  const metaStr = Object.keys(meta).length > 0 ? ` | ${JSON.stringify(meta)}` : '';
+
+  return `${color}[${timestamp}] [${level.toUpperCase()}] ${NAME} ${traceInfo}: ${message}${metaStr}${reset}`;
+});
+
+/**
+ * JSON formatter for production
+ */
+const jsonFormat = winston.format.printf(({ level, message, timestamp, traceId, spanId, ...meta }) => {
+  return JSON.stringify({
+    timestamp,
+    level,
+    service: NAME,
+    traceId: traceId || null,
+    spanId: spanId || null,
+    message,
+    ...meta,
+  });
+});
 
 const winstonLogger = winston.createLogger({
-  level: logLevel,
-  format,
+  level: process.env.LOG_LEVEL || (IS_DEVELOPMENT ? 'debug' : 'info'),
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.errors({ stack: true }),
+    LOG_FORMAT === 'json' ? jsonFormat : consoleFormat,
+  ),
   defaultMeta: {
-    service: config.service.name,
     version: config.service.version,
     environment: config.env,
   },
   transports: [
     new winston.transports.Console({
-      silent: process.env.NODE_ENV === 'test',
+      silent: IS_TEST,
     }),
   ],
 });
