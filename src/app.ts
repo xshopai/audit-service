@@ -1,6 +1,10 @@
 /**
  * Audit Service - Consumer Application
- * Subscribes to audit events from other services via Dapr pub/sub
+ * Subscribes to audit events from other services via Dapr pub/sub or RabbitMQ directly
+ *
+ * Dual-mode operation:
+ * - Production (Dapr): Events received via HTTP endpoints from Dapr subscriptions
+ * - Local Dev (RabbitMQ): Events consumed directly from RabbitMQ when Dapr is unavailable
  */
 
 import express from 'express';
@@ -12,6 +16,7 @@ import { errorMiddleware, notFoundHandler } from './middleware/error.middleware.
 import homeRoutes from './routes/home.routes.js';
 import operationalRoutes from './routes/operational.routes.js';
 import eventRoutes from './routes/events.routes.js';
+import { rabbitmqConsumer } from './consumers/rabbitmq.consumer.js';
 
 // Consumer state tracking
 export const consumerState = {
@@ -58,6 +63,22 @@ function startExpressServer(): void {
 }
 
 /**
+ * Check if Dapr sidecar is available
+ */
+async function isDaprAvailable(): Promise<boolean> {
+  const daprPort = process.env.DAPR_HTTP_PORT || '3500';
+  try {
+    const response = await fetch(`http://localhost:${daprPort}/v1.0/healthz`, {
+      method: 'GET',
+      signal: AbortSignal.timeout(2000),
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Start the consumer service
  */
 export async function startConsumer() {
@@ -73,10 +94,22 @@ export async function startConsumer() {
     consumerState.connected = true;
     logger.info('Database initialized');
 
-    // Start Express server with event routes
-    startExpressServer();
-    consumerState.consuming = true;
-    logger.info('Audit Service Consumer started successfully');
+    // Check Dapr availability
+    const daprAvailable = await isDaprAvailable();
+    const messagingProvider = process.env.MESSAGING_PROVIDER || (daprAvailable ? 'dapr' : 'rabbitmq');
+
+    if (messagingProvider === 'dapr') {
+      // Start Express server with Dapr event routes
+      startExpressServer();
+      consumerState.consuming = true;
+      logger.info('Audit Service Consumer started successfully with Dapr mode');
+    } else {
+      // Start Express server (for health checks) and RabbitMQ consumer
+      startExpressServer();
+      await rabbitmqConsumer.start();
+      consumerState.consuming = true;
+      logger.info('Audit Service Consumer started successfully with RabbitMQ mode');
+    }
   } catch (error) {
     logger.error('Failed to start consumer:', error);
     process.exit(1);
@@ -91,6 +124,9 @@ async function gracefulShutdown(signal: string) {
 
   try {
     consumerState.consuming = false;
+
+    // Stop RabbitMQ consumer if running
+    await rabbitmqConsumer.stop();
 
     // Close database connections
     await closeDatabaseConnections();
