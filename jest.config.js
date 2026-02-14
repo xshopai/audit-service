@@ -10,6 +10,9 @@ export default {
       {
         useESM: true,
         tsconfig: 'tsconfig.test.json',
+        diagnostics: {
+          ignoreCodes: [151002],
+        },
       },
     ],
   },

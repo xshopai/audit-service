@@ -2,7 +2,7 @@
  * Test Helpers and Utilities
  */
 
-import { EventMessage } from '../src/shared/messaging/messageBroker.js';
+import { EventMessage } from '../src/types/events.js';
 
 /**
  * Create a mock event message for testing
@@ -24,7 +24,7 @@ export function createMockEvent(
     source: options.source || 'test-service',
     data,
     metadata: {
-      correlationId: options.correlationId || `corr-${Date.now()}`,
+      traceId: options.correlationId || `corr-${Date.now()}`,
       version: '1.0',
     },
   };

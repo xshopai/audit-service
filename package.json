@@ -10,6 +10,7 @@
     "dev": "npx tsx watch src/server.ts",
     "debug": "npx tsx --inspect=9229 src/server.ts",
     "test": "jest",
+    "test:unit": "jest --testPathPattern=tests/unit --passWithNoTests",
     "test:watch": "jest --watch",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
