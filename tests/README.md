@@ -86,7 +86,7 @@ const event = createMockEvent(
     eventId: 'evt-123',
     source: 'auth-service',
     correlationId: 'corr-123',
-  }
+  },
 );
 ```
 
@@ -137,7 +137,7 @@ describe('Your Event Handlers', () => {
         'YOUR_EVENT',
         expect.objectContaining({
           /* assertions */
-        })
+        }),
       );
     });
   });
