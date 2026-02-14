@@ -233,8 +233,8 @@ export const handlePasswordChanged = handleEvent('password.changed', (event: any
 });
 
 // Order Events
-export const handleOrderPlaced = handleEvent('order.placed', (event: any) => {
-  logger.business('ORDER_PLACED', {
+export const handleOrderCreated = handleEvent('order.created', (event: any) => {
+  logger.business('ORDER_CREATED', {
     eventId: event.eventId,
     orderId: event.data?.orderId,
     userId: event.data?.userId,

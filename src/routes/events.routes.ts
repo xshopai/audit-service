@@ -19,7 +19,7 @@ router.post('/events/user/email-verified', eventsController.handleEmailVerified)
 router.post('/events/user/password-changed', eventsController.handlePasswordChanged);
 
 // Order Events
-router.post('/events/order/placed', eventsController.handleOrderPlaced);
+router.post('/events/order/created', eventsController.handleOrderCreated);
 router.post('/events/order/cancelled', eventsController.handleOrderCancelled);
 router.post('/events/order/delivered', eventsController.handleOrderDelivered);
 router.post('/events/order/payment-received', eventsController.handlePaymentReceived);

@@ -50,7 +50,7 @@ The tests cover all 16 event handlers:
 
 ### Order & Payment Handlers (5)
 
-- `handleOrderPlaced` - Order placement audit
+- `handleOrderCreated` - Order creation audit
 - `handleOrderCancelled` - Order cancellation audit
 - `handleOrderDelivered` - Order delivery audit
 - `handlePaymentReceived` - Successful payment audit

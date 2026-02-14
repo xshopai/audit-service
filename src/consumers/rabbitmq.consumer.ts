@@ -23,7 +23,7 @@ import {
   handleEmailVerified,
   handlePasswordChanged,
   // Order Events
-  handleOrderPlaced,
+  handleOrderCreated,
   handleOrderCancelled,
   handleOrderDelivered,
   handlePaymentReceived,
@@ -117,8 +117,8 @@ const TOPIC_HANDLERS: Record<string, (event: any) => Promise<void>> = {
   },
 
   // Order Events (3)
-  'order.placed': async (event) => {
-    await handleOrderPlaced(createMockRequest(event), createMockResponse());
+  'order.created': async (event) => {
+    await handleOrderCreated(createMockRequest(event), createMockResponse());
   },
   'order.cancelled': async (event) => {
     await handleOrderCancelled(createMockRequest(event), createMockResponse());
@@ -400,7 +400,7 @@ export class RabbitMQConsumer {
           channel.nack(msg, false, true);
         }
       },
-      { noAck: false }
+      { noAck: false },
     );
 
     logger.info(`Subscribed to ${topics.length} audit topics`, {

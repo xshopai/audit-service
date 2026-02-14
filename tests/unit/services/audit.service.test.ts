@@ -38,7 +38,7 @@ describe('AuditLogService', () => {
       query: jest.fn(),
     };
     (getDatabasePool as jest.Mock).mockReturnValue(mockPool);
-    
+
     // Get a fresh instance using the singleton pattern
     service = (AuditLogService as any).getInstance();
   });
@@ -75,29 +75,27 @@ describe('AuditLogService', () => {
           validAuditEntry.eventType,
           validAuditEntry.eventAction,
           validAuditEntry.serviceName,
-        ])
+        ]),
       );
       expect(logger.debug).toHaveBeenCalledWith(
         '[SUCCESS] Audit log written to database',
         expect.objectContaining({
           eventType: 'user.created',
           eventAction: 'CREATE',
-        })
+        }),
       );
     });
 
     it('should handle database errors', async () => {
       mockPool.query.mockRejectedValue(new Error('Database connection failed'));
 
-      await expect(service.writeAuditLog(validAuditEntry)).rejects.toThrow(
-        'Database connection failed'
-      );
+      await expect(service.writeAuditLog(validAuditEntry)).rejects.toThrow('Database connection failed');
 
       expect(logger.error).toHaveBeenCalledWith(
         '[ERROR] Failed to write audit log to database',
         expect.objectContaining({
           error: 'Database connection failed',
-        })
+        }),
       );
     });
 
@@ -144,7 +142,7 @@ describe('AuditLogService', () => {
       expect(mockPool.query).toHaveBeenCalledTimes(1);
       expect(mockPool.query).toHaveBeenCalledWith(
         expect.stringContaining('INSERT INTO audit_logs'),
-        expect.arrayContaining(['user.created', 'CREATE'])
+        expect.arrayContaining(['user.created', 'CREATE']),
       );
     });
 
@@ -155,13 +153,13 @@ describe('AuditLogService', () => {
 
       const eventWithoutMetadata = {
         eventId: 'evt-123',
-        eventType: 'order.placed',
+        eventType: 'order.created',
         timestamp: new Date().toISOString(),
         source: 'order-service',
         data: { orderId: 'order-456' },
       };
 
-      await service.writeAuditLogFromEvent('order.placed', 'CREATE', eventWithoutMetadata, {
+      await service.writeAuditLogFromEvent('order.created', 'CREATE', eventWithoutMetadata, {
         resourceType: 'order',
         resourceId: 'order-456',
       });
@@ -191,9 +189,7 @@ describe('AuditLogService', () => {
     ];
 
     it('should retrieve audit logs with default pagination', async () => {
-      mockPool.query
-        .mockResolvedValueOnce({ rows: [{ total: '10' }] })
-        .mockResolvedValueOnce({ rows: mockLogs });
+      mockPool.query.mockResolvedValueOnce({ rows: [{ total: '10' }] }).mockResolvedValueOnce({ rows: mockLogs });
 
       const result = await service.getAuditLogs();
 
@@ -203,9 +199,7 @@ describe('AuditLogService', () => {
     });
 
     it('should apply userId filter', async () => {
-      mockPool.query
-        .mockResolvedValueOnce({ rows: [{ total: '5' }] })
-        .mockResolvedValueOnce({ rows: [mockLogs[0]] });
+      mockPool.query.mockResolvedValueOnce({ rows: [{ total: '5' }] }).mockResolvedValueOnce({ rows: [mockLogs[0]] });
 
       const result = await service.getAuditLogs({ userId: 'user-123' });
 
@@ -215,9 +209,7 @@ describe('AuditLogService', () => {
     });
 
     it('should apply eventType filter', async () => {
-      mockPool.query
-        .mockResolvedValueOnce({ rows: [{ total: '3' }] })
-        .mockResolvedValueOnce({ rows: [mockLogs[0]] });
+      mockPool.query.mockResolvedValueOnce({ rows: [{ total: '3' }] }).mockResolvedValueOnce({ rows: [mockLogs[0]] });
 
       await service.getAuditLogs({ eventType: 'user.created' });
 
@@ -225,9 +217,7 @@ describe('AuditLogService', () => {
     });
 
     it('should apply serviceName filter', async () => {
-      mockPool.query
-        .mockResolvedValueOnce({ rows: [{ total: '8' }] })
-        .mockResolvedValueOnce({ rows: mockLogs });
+      mockPool.query.mockResolvedValueOnce({ rows: [{ total: '8' }] }).mockResolvedValueOnce({ rows: mockLogs });
 
       await service.getAuditLogs({ serviceName: 'user-service' });
 
@@ -235,9 +225,7 @@ describe('AuditLogService', () => {
     });
 
     it('should apply traceId filter', async () => {
-      mockPool.query
-        .mockResolvedValueOnce({ rows: [{ total: '1' }] })
-        .mockResolvedValueOnce({ rows: [mockLogs[0]] });
+      mockPool.query.mockResolvedValueOnce({ rows: [{ total: '1' }] }).mockResolvedValueOnce({ rows: [mockLogs[0]] });
 
       await service.getAuditLogs({ traceId: 'trace-1' });
 
@@ -245,9 +233,7 @@ describe('AuditLogService', () => {
     });
 
     it('should apply date range filters', async () => {
-      mockPool.query
-        .mockResolvedValueOnce({ rows: [{ total: '2' }] })
-        .mockResolvedValueOnce({ rows: mockLogs });
+      mockPool.query.mockResolvedValueOnce({ rows: [{ total: '2' }] }).mockResolvedValueOnce({ rows: mockLogs });
 
       const startDate = new Date('2025-01-01');
       const endDate = new Date('2025-01-31');
@@ -259,9 +245,7 @@ describe('AuditLogService', () => {
     });
 
     it('should apply custom pagination', async () => {
-      mockPool.query
-        .mockResolvedValueOnce({ rows: [{ total: '100' }] })
-        .mockResolvedValueOnce({ rows: mockLogs });
+      mockPool.query.mockResolvedValueOnce({ rows: [{ total: '100' }] }).mockResolvedValueOnce({ rows: mockLogs });
 
       await service.getAuditLogs({ limit: 20, offset: 40 });
 
@@ -280,14 +264,12 @@ describe('AuditLogService', () => {
         '[ERROR] Failed to retrieve audit logs',
         expect.objectContaining({
           error: 'Query failed',
-        })
+        }),
       );
     });
 
     it('should combine multiple filters', async () => {
-      mockPool.query
-        .mockResolvedValueOnce({ rows: [{ total: '1' }] })
-        .mockResolvedValueOnce({ rows: [mockLogs[0]] });
+      mockPool.query.mockResolvedValueOnce({ rows: [{ total: '1' }] }).mockResolvedValueOnce({ rows: [mockLogs[0]] });
 
       await service.getAuditLogs({
         userId: 'user-123',

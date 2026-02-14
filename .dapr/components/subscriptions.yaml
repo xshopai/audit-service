@@ -125,10 +125,10 @@ scopes:
 apiVersion: dapr.io/v1alpha1
 kind: Subscription
 metadata:
-  name: order-placed-subscription
+  name: order-created-subscription
 spec:
-  topic: order.placed
-  route: /events/order/placed
+  topic: order.created
+  route: /events/order/created
   pubsubname: pubsub
 scopes:
   - audit-service
