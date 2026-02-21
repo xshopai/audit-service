@@ -1,0 +1,104 @@
+# ==============================================================================
+# Audit Service - CI/CD Pipeline
+# ==============================================================================
+# Build, test, and deploy to Azure App Service
+# ==============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "package*.json"
+      - "Dockerfile"
+      - ".github/workflows/ci-app-service.yml"
+
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "package*.json"
+      - "Dockerfile"
+
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: "24"
+  SERVICE_NAME: audit-service
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint --if-present
+        continue-on-error: true
+
+      - name: Run unit tests
+        run: npm run test:unit -- --passWithNoTests
+
+      - name: Build application
+        run: npm run build --if-present
+
+      - name: Create deployment artifact
+        run: |
+          mkdir -p deploy
+          cp -r dist deploy/
+          cp package*.json deploy/
+          cd deploy && npm ci --omit=dev
+          cd .. && zip -r deploy.zip deploy
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-package
+          path: deploy.zip
+          retention-days: 1
+
+  deploy-dev:
+    name: Deploy to Dev
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: dev
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-package
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy to App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: app-${{ env.SERVICE_NAME }}-xshopai-dev-${{ vars.DEPLOY_SUFFIX_DEV }}
+          package: deploy.zip
