@@ -58,13 +58,13 @@ jobs:
       - name: Build application
         run: npm run build --if-present
 
-      - name: Create deployment artifact
+      - name: Create deployment package
         run: |
-          mkdir -p deploy
-          cp -r dist deploy/
-          cp package*.json deploy/
-          cd deploy && npm ci --omit=dev
-          cd .. && zip -r deploy.zip deploy
+          echo "Installing production dependencies..."
+          npm ci --omit=dev
+          echo "Creating deployment package..."
+          zip -r deploy.zip dist package*.json node_modules -q
+          echo "✓ Package created: $(du -h deploy.zip | cut -f1)"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
