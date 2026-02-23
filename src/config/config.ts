@@ -46,6 +46,7 @@ interface Config {
   env: string;
   port: number;
   host: string;
+  serviceInvocationMode: 'http' | 'dapr';
   database: DatabaseConfig;
   logging: LoggingConfig;
   audit: AuditConfig;
@@ -86,6 +87,7 @@ export const config: Config = {
   env: getEnv('NODE_ENV', 'development'),
   port: getEnvNumber('PORT', 8012),
   host: getEnv('HOST', '0.0.0.0'),
+  serviceInvocationMode: (getEnv('SERVICE_INVOCATION_MODE', 'http') as 'http' | 'dapr'),
 
   database: {
     host: getEnv('POSTGRES_HOST', 'localhost'),
