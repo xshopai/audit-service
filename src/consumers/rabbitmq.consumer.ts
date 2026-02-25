@@ -24,8 +24,12 @@ import {
   handlePasswordChanged,
   // Order Events
   handleOrderCreated,
-  handleOrderCancelled,
+  handleOrderConfirmed,
+  handleOrderShipped,
   handleOrderDelivered,
+  handleOrderCompleted,
+  handleOrderCancelled,
+  handleOrderRefunded,
   handlePaymentReceived,
   handlePaymentFailed,
   // Product Events
@@ -116,15 +120,27 @@ const TOPIC_HANDLERS: Record<string, (event: any) => Promise<void>> = {
     await handlePasswordChanged(createMockRequest(event), createMockResponse());
   },
 
-  // Order Events (3)
+  // Order Events (7)
   'order.created': async (event) => {
     await handleOrderCreated(createMockRequest(event), createMockResponse());
+  },
+  'order.confirmed': async (event) => {
+    await handleOrderConfirmed(createMockRequest(event), createMockResponse());
+  },
+  'order.shipped': async (event) => {
+    await handleOrderShipped(createMockRequest(event), createMockResponse());
+  },
+  'order.delivered': async (event) => {
+    await handleOrderDelivered(createMockRequest(event), createMockResponse());
+  },
+  'order.completed': async (event) => {
+    await handleOrderCompleted(createMockRequest(event), createMockResponse());
   },
   'order.cancelled': async (event) => {
     await handleOrderCancelled(createMockRequest(event), createMockResponse());
   },
-  'order.delivered': async (event) => {
-    await handleOrderDelivered(createMockRequest(event), createMockResponse());
+  'order.refunded': async (event) => {
+    await handleOrderRefunded(createMockRequest(event), createMockResponse());
   },
 
   // Payment Events (2)

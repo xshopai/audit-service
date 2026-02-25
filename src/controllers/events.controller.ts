@@ -265,12 +265,52 @@ export const handleOrderCancelled = handleEvent('order.cancelled', (event: any) 
   });
 });
 
+export const handleOrderConfirmed = handleEvent('order.confirmed', (event: any) => {
+  logger.business('ORDER_CONFIRMED', {
+    eventId: event.eventId,
+    orderId: event.data?.orderId,
+    orderNumber: event.data?.orderNumber,
+    userId: event.data?.userId,
+    confirmedBy: event.data?.confirmedBy,
+    confirmedAt: event.data?.confirmedAt || event.timestamp,
+    source: event.source || 'order-service',
+    traceId: event.metadata?.traceId,
+    spanId: event.metadata?.spanId,
+    resourceType: 'order',
+    resourceId: event.data?.orderId,
+    severity: 'medium',
+    complianceTags: ['order', 'confirmation', 'admin-action'],
+  });
+});
+
+export const handleOrderShipped = handleEvent('order.shipped', (event: any) => {
+  logger.business('ORDER_SHIPPED', {
+    eventId: event.eventId,
+    orderId: event.data?.orderId,
+    orderNumber: event.data?.orderNumber,
+    userId: event.data?.userId,
+    trackingNumber: event.data?.trackingNumber,
+    carrier: event.data?.carrier,
+    shippedBy: event.data?.shippedBy,
+    shippedAt: event.data?.shippedAt || event.timestamp,
+    source: event.source || 'order-service',
+    traceId: event.metadata?.traceId,
+    spanId: event.metadata?.spanId,
+    resourceType: 'order',
+    resourceId: event.data?.orderId,
+    severity: 'medium',
+    complianceTags: ['order', 'shipping', 'fulfillment'],
+  });
+});
+
 export const handleOrderDelivered = handleEvent('order.delivered', (event: any) => {
   logger.business('ORDER_DELIVERED', {
     eventId: event.eventId,
     orderId: event.data?.orderId,
+    orderNumber: event.data?.orderNumber,
     userId: event.data?.userId,
-    deliveredAt: event.data?.deliveredAt,
+    deliveredAt: event.data?.deliveredAt || event.timestamp,
+    deliveryConfirmedBy: event.data?.deliveryConfirmedBy,
     source: event.source || 'order-service',
     traceId: event.metadata?.traceId,
     spanId: event.metadata?.spanId,
@@ -278,6 +318,44 @@ export const handleOrderDelivered = handleEvent('order.delivered', (event: any) 
     resourceId: event.data?.orderId,
     severity: 'medium',
     complianceTags: ['order', 'fulfillment', 'delivery'],
+  });
+});
+
+export const handleOrderCompleted = handleEvent('order.completed', (event: any) => {
+  logger.business('ORDER_COMPLETED', {
+    eventId: event.eventId,
+    orderId: event.data?.orderId,
+    orderNumber: event.data?.orderNumber,
+    userId: event.data?.userId,
+    totalAmount: event.data?.totalAmount,
+    completedAt: event.data?.completedAt || event.timestamp,
+    source: event.source || 'order-service',
+    traceId: event.metadata?.traceId,
+    spanId: event.metadata?.spanId,
+    resourceType: 'order',
+    resourceId: event.data?.orderId,
+    severity: 'medium',
+    complianceTags: ['order', 'completion', 'transaction'],
+  });
+});
+
+export const handleOrderRefunded = handleEvent('order.refunded', (event: any) => {
+  logger.business('ORDER_REFUNDED', {
+    eventId: event.eventId,
+    orderId: event.data?.orderId,
+    orderNumber: event.data?.orderNumber,
+    userId: event.data?.userId,
+    refundAmount: event.data?.refundAmount,
+    refundReason: event.data?.refundReason,
+    refundedBy: event.data?.refundedBy,
+    refundedAt: event.data?.refundedAt || event.timestamp,
+    source: event.source || 'payment-service',
+    traceId: event.metadata?.traceId,
+    spanId: event.metadata?.spanId,
+    resourceType: 'order',
+    resourceId: event.data?.orderId,
+    severity: 'high',
+    complianceTags: ['order', 'refund', 'financial', 'transaction'],
   });
 });
 

@@ -20,8 +20,12 @@ router.post('/events/user/password-changed', eventsController.handlePasswordChan
 
 // Order Events
 router.post('/events/order/created', eventsController.handleOrderCreated);
-router.post('/events/order/cancelled', eventsController.handleOrderCancelled);
+router.post('/events/order/confirmed', eventsController.handleOrderConfirmed);
+router.post('/events/order/shipped', eventsController.handleOrderShipped);
 router.post('/events/order/delivered', eventsController.handleOrderDelivered);
+router.post('/events/order/completed', eventsController.handleOrderCompleted);
+router.post('/events/order/cancelled', eventsController.handleOrderCancelled);
+router.post('/events/order/refunded', eventsController.handleOrderRefunded);
 router.post('/events/order/payment-received', eventsController.handlePaymentReceived);
 router.post('/events/order/payment-failed', eventsController.handlePaymentFailed);
 
