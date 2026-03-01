@@ -11,6 +11,7 @@ import express from 'express';
 import { config, validateConfig } from './config/index.js';
 import { initializeDatabase, closeDatabaseConnections } from './db/index.js';
 import logger from './core/logger.js';
+import { register as consulRegister, deregister as consulDeregister } from './core/consulRegistration.js';
 import { traceContextMiddleware } from './middleware/traceContext.middleware.js';
 import { errorMiddleware, notFoundHandler } from './middleware/error.middleware.js';
 import homeRoutes from './routes/home.routes.js';
@@ -55,8 +56,9 @@ function startExpressServer(): void {
   // Error handler (must be last)
   app.use(errorMiddleware as any);
 
-  app.listen(PORT, HOST, () => {
+  app.listen(PORT, HOST, async () => {
     const displayHost = HOST === '0.0.0.0' ? 'localhost' : HOST;
+    await consulRegister('audit-service', PORT, HOST);
     logger.info(`Audit Service running on ${displayHost}:${PORT}`);
     logger.info(`Ready to receive events from Dapr subscriptions`);
   });
@@ -124,6 +126,9 @@ async function gracefulShutdown(signal: string) {
 
   try {
     consumerState.consuming = false;
+
+    // Deregister from Consul
+    await consulDeregister();
 
     // Stop RabbitMQ consumer if running
     await rabbitmqConsumer.stop();
