@@ -1,254 +1,198 @@
+<div align="center">
+
 # 📋 Audit Service
 
-Event-driven audit logging microservice for xshopai - consumes events from message broker and stores immutable audit trails in PostgreSQL for compliance and monitoring.
+**Event-driven audit logging microservice for the xshopai e-commerce platform**
 
-## 🚀 Quick Start
+[![Node.js](https://img.shields.io/badge/Node.js-20+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.2-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://postgresql.org)
+[![Dapr](https://img.shields.io/badge/Dapr-Enabled-0D597F?style=for-the-badge&logo=dapr&logoColor=white)](https://dapr.io)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+
+[Getting Started](#-getting-started) •
+[Documentation](#-documentation) •
+[API Reference](#api-endpoints) •
+[Contributing](#-contributing)
+
+</div>
+
+---
+
+## 🎯 Overview
+
+The **Audit Service** is a terminal event consumer that captures all platform activity into an immutable audit trail. It subscribes to events from every xshopai service via Dapr pub/sub (RabbitMQ) and stores structured audit records in PostgreSQL. Designed for compliance, it tracks WHO did WHAT, WHEN, WHERE, WHY, and HOW — supporting advanced search, retention policies, and export capabilities.
+
+---
+
+## ✨ Key Features
+
+<table>
+<tr>
+<td width="50%">
+
+### 📋 Comprehensive Audit Trail
+
+- Immutable audit record storage (PostgreSQL)
+- WHO/WHAT/WHEN/WHERE/WHY/HOW tracking
+- Configurable retention policies (default: 7 years)
+- Compliance-ready export capabilities
+
+</td>
+<td width="50%">
+
+### 📡 Event-Driven Architecture
+
+- Consumes events from all services via Dapr pub/sub
+- Terminal consumer (no outbound publishing)
+- Correlation tracking across distributed services
+- RabbitMQ message broker integration
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🔍 Search & Analytics
+
+- Advanced search with filters and statistics
+- High-performance queries (<5ms latency)
+- Risk level classification (low/medium/high)
+- Entity-based and user-based audit views
+
+</td>
+<td width="50%">
+
+### 🛡️ Enterprise Security
+
+- JWT authentication with service tokens
+- Service-to-service token validation
+- OpenTelemetry distributed tracing
+- Prometheus-compatible health checks
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- **Node.js** 18+ ([Download](https://nodejs.org/))
-- **PostgreSQL** 15+ ([Download](https://www.postgresql.org/download/))
-- **Redis** 7+ ([Install Guide](https://redis.io/docs/getting-started/))
-- **Dapr CLI** 1.16+ ([Install Guide](https://docs.dapr.io/getting-started/install-dapr-cli/))
+- Node.js 20+
+- PostgreSQL 15+
+- Docker & Docker Compose (optional)
+- Dapr CLI (for production-like setup)
 
-### Using Docker (Recommended)
-
-**1. Start Services**
+### Quick Start with Docker Compose
 
 ```bash
-cd audit-service
-docker-compose up -d
-```
-
-**2. Check Health**
-
-```bash
-curl http://localhost:9000/api/v1/health
-```
-
-### Manual Setup
-
-**1. Start PostgreSQL & Redis**
-
-```bash
-# Using Docker
-docker run -d --name audit-postgres -p 5432:5432 \
-  -e POSTGRES_PASSWORD=postgres \
-  -e POSTGRES_DB=audit_service_db \
-  postgres:15
-
-docker run -d --name audit-redis -p 6379:6379 redis:7-alpine
-```
-
-**2. Clone & Install**
-
-```bash
+# Clone the repository
 git clone https://github.com/xshopai/audit-service.git
 cd audit-service
+
+# Start all services (PostgreSQL + audit-service)
+docker-compose up -d
+
+# Verify the service is healthy
+curl http://localhost:8012/health
+```
+
+### Local Development Setup
+
+<details>
+<summary><b>🔧 Without Dapr (Simple Setup)</b></summary>
+
+```bash
+# Install dependencies
 npm install
-```
 
-**3. Configure Environment**
+# Start PostgreSQL
+docker-compose -f docker-compose.db.yml up -d
 
-```bash
-# Copy environment template
+# Set up environment variables
 cp .env.example .env
+# Edit .env with your configuration
 
-# Edit .env - update these values:
-# DATABASE_URL=postgresql://postgres:postgres@localhost:5432/audit_service_db
-# REDIS_URL=redis://localhost:6379
-```
-
-**4. Initialize Dapr**
-
-```bash
-# First time only
-dapr init
-```
-
-**5. Build & Run**
-
-```bash
 # Build TypeScript
 npm run build
 
-# Start with Dapr
+# Start the service
 npm run dev
 ```
 
-**6. Verify**
+📖 See [Local Development Guide](docs/LOCAL_DEVELOPMENT.md) for detailed instructions.
+
+</details>
+
+<details>
+<summary><b>⚡ With Dapr (Production-like)</b></summary>
 
 ```bash
-# Check health
-curl http://localhost:1012/health
+# Ensure Dapr is initialized
+dapr init
 
-# Should return: {"status":"UP","service":"audit-service"...}
+# Start with Dapr sidecar
+./run.sh       # Linux/Mac
+.\run.ps1      # Windows
+
+# Or manually
+dapr run \
+  --app-id audit-service \
+  --app-port 8012 \
+  --dapr-http-port 3500 \
+  --resources-path .dapr/components \
+  --config .dapr/config.yaml \
+  -- npm start
 ```
 
-### Common Commands
+> **Note:** All services now use the standard Dapr ports (3500 for HTTP, 50001 for gRPC).
+
+📖 See [Dapr Development Guide](docs/LOCAL_DEVELOPMENT_DAPR.md) for detailed instructions.
+
+</details>
+
+---
+
+## 📚 Documentation
+
+| Document                                                         | Description                                        |
+| :--------------------------------------------------------------- | :------------------------------------------------- |
+| 📘 [Local Development](docs/LOCAL_DEVELOPMENT.md)                | Step-by-step local setup without Dapr              |
+| ⚡ [Local Development with Dapr](docs/LOCAL_DEVELOPMENT_DAPR.md) | Local setup with full Dapr integration             |
+| ☁️ [Azure Container Apps](docs/ACA_DEPLOYMENT.md)                | Deploy to serverless containers with built-in Dapr |
+
+---
+
+## 🧪 Testing
 
 ```bash
-# Run tests
+# Run all tests
 npm test
 
-# Build TypeScript
-npm run build
+# Run unit tests only
+npm run test:unit
+
+# Run tests in watch mode
+npm run test:watch
 
 # Lint code
 npm run lint
 
 # Format code
 npm run format
-
-# Production mode
-npm start
 ```
 
-## 📚 Documentation
+### Test Coverage
 
-| Document                                      | Description                             |
-| --------------------------------------------- | --------------------------------------- |
-| [📖 Developer Guide](docs/DEVELOPER_GUIDE.md) | Local setup, debugging, daily workflows |
-| [📘 Technical Reference](docs/TECHNICAL.md)   | Architecture, security, monitoring      |
-| [🤝 Contributing](docs/CONTRIBUTING.md)       | Contribution guidelines and workflow    |
+| Metric     | Status      |
+| :--------- | :---------- |
+| Unit Tests | ✅ Jest     |
+| Linting    | ✅ ESLint   |
+| Formatting | ✅ Prettier |
 
-## ⚙️ Configuration
-
-### Required Environment Variables
-
-```bash
-# Service
-NODE_ENV=development              # Environment: development, production, test
-PORT=1012                         # HTTP server port
-
-# Database
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/audit_service_db
-
-# Cache
-REDIS_URL=redis://localhost:6379
-
-# Dapr
-DAPR_HTTP_PORT=3500              # Dapr sidecar HTTP port
-DAPR_GRPC_PORT=50001             # Dapr sidecar gRPC port
-DAPR_APP_ID=audit-service        # Dapr application ID
-DAPR_PUBSUB_NAME=pubsub          # Dapr pub/sub component name
-DAPR_SECRETSTORE_NAME=secretstore  # Dapr secret store component name
-```
-
-See [.env.example](.env.example) for complete configuration options.
-
-## ✨ Key Features
-
-## ✨ Key Features
-
-- Comprehensive audit logging (WHO, WHAT, WHEN, WHERE, WHY, HOW)
-- High performance (10,000+ requests/second, <5ms latency)
-- JWT authentication with service tokens
-- Advanced search capabilities with statistics
-- Configurable retention policies
-- Compliance-ready with export capabilities
-- Prometheus metrics and health checks
-- Correlation tracking across distributed services
-- Immutable audit trail storage
-- Event-driven architecture with Dapr pub/sub
-
-## 🏗️ Architecture
-
-**Consumer-Only Pattern:**
-
-```
-Message Broker → Audit Service → PostgreSQL + Redis
-                       ↓
-                 Immutable Audit Trail
-```
-
-- Consumes events from all services via Dapr pub/sub
-- Stores immutable audit records in PostgreSQL
-- Uses Redis for caching and performance
-- Provides query API for audit trail retrieval
-- No event publishing (terminal consumer)
-
-## 🔗 Related Services
-
-- [auth-service](https://github.com/xshopai/auth-service) - Authentication events
-- [user-service](https://github.com/xshopai/user-service) - User lifecycle events
-- [notification-service](https://github.com/xshopai/notification-service) - Notification outcomes
-
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE)
-
-## 📞 Support
-
-- **Issues**: [GitHub Issues](https://github.com/xshopai/audit-service/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/xshopai/audit-service/discussions)
-- **Documentation**: [docs/](docs/)
-
-## Quick Start
-
-### Using Docker (Recommended)
-
-1. **Clone and start services:**
-
-   ```bash
-   cd audit-service
-   docker-compose up -d
-   ```
-
-2. **Check health:**
-   ```bash
-   curl http://localhost:9000/api/v1/health
-   ```
-
-### Manual Setup
-
-1. **Prerequisites:**
-   - Node.js 18+
-   - PostgreSQL 15+
-   - Redis 7+
-
-2. **Install dependencies:**
-
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment:**
-
-   ```bash
-   cp .env.example .env
-   # Edit .env with your database and Redis settings
-   ```
-
-4. **Set up database:**
-
-   ```bash
-   # Run the initialization script
-   psql -U postgres -f scripts/init-db.sql
-   ```
-
-5. **Start the service:**
-   ```bash
-   npm run dev
-   ```
-
-## Environment Variables
-
-| Variable               | Description          | Default          |
-| ---------------------- | -------------------- | ---------------- |
-| `NODE_ENV`             | Environment          | `development`    |
-| `PORT`                 | Service port         | `9000`           |
-| `DB_HOST`              | PostgreSQL host      | `localhost`      |
-| `DB_PORT`              | PostgreSQL port      | `5432`           |
-| `DB_NAME`              | Database name        | `audit_service`  |
-| `DB_USER`              | Database user        | `postgres`       |
-| `DB_PASSWORD`          | Database password    | `password`       |
-| `REDIS_HOST`           | Redis host           | `localhost`      |
-| `REDIS_PORT`           | Redis port           | `6379`           |
-| `JWT_SECRET`           | JWT secret key       | Required         |
-| `SERVICE_SECRET`       | Service token secret | Required         |
-| `LOG_LEVEL`            | Logging level        | `info`           |
-| `AUDIT_RETENTION_DAYS` | Log retention period | `2555` (7 years) |
+---
 
 ## API Endpoints
 
@@ -256,47 +200,138 @@ MIT License - see [LICENSE](LICENSE)
 
 All endpoints require service authentication via `x-service-token` header or Bearer token.
 
-### Core Endpoints
+| Method | Endpoint              | Description                    |
+| :----- | :-------------------- | :----------------------------- |
+| POST   | `/api/v1/logs`        | Create audit log entry         |
+| GET    | `/api/v1/logs/search` | Search audit logs with filters |
+| GET    | `/api/v1/stats`       | Get audit statistics           |
+| GET    | `/health`             | Health check                   |
 
-#### Create Audit Log
+---
 
-```bash
-POST /api/v1/logs
-Authorization: Bearer <service-token>
-Content-Type: application/json
+## 🏗️ Project Structure
 
-{
-  "action": "USER_LOGIN",
-  "entity_type": "user",
-  "entity_id": "user123",
-  "user_id": "user123",
-  "service_name": "auth-service",
-  "business_context": {
-    "login_method": "password",
-    "success": true
-  },
-  "risk_level": "low"
-}
+```
+audit-service/
+├── 📁 src/                       # Application source code
+│   ├── 📁 api/                   # REST API endpoints
+│   ├── 📁 consumers/             # Event consumers (Dapr pub/sub)
+│   ├── 📁 services/              # Business logic layer
+│   ├── 📁 repositories/          # Data access layer (PostgreSQL)
+│   ├── 📁 models/                # Data models and schemas
+│   ├── 📁 middleware/            # Authentication, logging
+│   └── 📁 utils/                 # Helper functions
+├── 📁 tests/                     # Test suite
+├── 📁 dist/                      # Compiled JavaScript output
+├── 📁 scripts/                   # Database init and utility scripts
+├── 📁 docs/                      # Documentation
+├── 📁 .dapr/                     # Dapr configuration
+│   ├── 📁 components/            # Pub/sub, state store configs
+│   └── 📄 config.yaml            # Dapr runtime configuration
+├── 📄 docker-compose.yml         # Full service stack
+├── 📄 docker-compose.db.yml      # PostgreSQL only
+├── 📄 Dockerfile                 # Production container image
+└── 📄 package.json               # Dependencies and scripts
 ```
 
-#### Search Audit Logs
+---
+
+## 🔧 Technology Stack
+
+| Category          | Technology                                 |
+| :---------------- | :----------------------------------------- |
+| 🟢 Runtime        | Node.js 20+ with TypeScript                |
+| 🌐 Framework      | Express 4.18 with path aliases (tsc-alias) |
+| 🗄️ Database       | PostgreSQL 15+ via pg driver               |
+| 📨 Messaging      | Dapr Pub/Sub (RabbitMQ) + amqplib          |
+| 🔐 Authentication | JWT Tokens + service-to-service tokens     |
+| 🧪 Testing        | Jest with unit tests                       |
+| 📊 Observability  | OpenTelemetry + Azure Monitor + Winston    |
+
+---
+
+## ⚡ Quick Reference
 
 ```bash
-GET /api/v1/logs/search?user_id=user123&start_date=2024-01-01&limit=100
+# 🐳 Docker Compose
+docker-compose up -d              # Start all services
+docker-compose down               # Stop all services
+docker-compose -f docker-compose.db.yml up -d  # PostgreSQL only
+
+# 🔧 Local Development
+npm run dev                       # Start with hot reload
+npm run build                     # Compile TypeScript
+npm start                         # Production mode
+
+# ⚡ Dapr Development
+./run.sh                          # Linux/Mac
+.\run.ps1                         # Windows
+
+# 🧪 Testing
+npm test                          # Run all tests
+npm run test:unit                 # Unit tests only
+npm run test:watch                # Watch mode
+
+# 🔍 Health Check
+curl http://localhost:8012/health
 ```
 
-#### Get Statistics
+---
 
-```bash
-GET /api/v1/stats
-```
+## 🤝 Contributing
 
-## Development
+We welcome contributions! Please follow these steps:
 
-Start the development server:
+1. **Fork** the repository
+2. **Create** a feature branch
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+3. **Write** tests for your changes
+4. **Run** the test suite
+   ```bash
+   npm test && npm run lint
+   ```
+5. **Commit** your changes
+   ```bash
+   git commit -m 'feat: add amazing feature'
+   ```
+6. **Push** to your branch
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+7. **Open** a Pull Request
 
-```bash
-npm run dev
-```
+Please ensure your PR:
 
-The service will be available at `http://localhost:9000`
+- ✅ Passes all existing tests
+- ✅ Includes tests for new functionality
+- ✅ Follows the existing code style
+- ✅ Updates documentation as needed
+
+---
+
+## 🆘 Support
+
+| Resource         | Link                                                                       |
+| :--------------- | :------------------------------------------------------------------------- |
+| 🐛 Bug Reports   | [GitHub Issues](https://github.com/xshopai/audit-service/issues)           |
+| 📖 Documentation | [docs/](docs/)                                                             |
+| 💬 Discussions   | [GitHub Discussions](https://github.com/xshopai/audit-service/discussions) |
+
+---
+
+## 📄 License
+
+This project is part of the **xshopai** e-commerce platform.
+Licensed under the MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+<div align="center">
+
+**[⬆ Back to Top](#-audit-service)**
+
+Made with ❤️ by the xshopai team
+
+</div>
